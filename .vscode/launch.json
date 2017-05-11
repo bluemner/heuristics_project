@@ -1,0 +1,20 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+	
+		{
+			"name": "Driver (Windows)",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceRoot}/bin/driver.exe",
+			"args": [
+			
+			],
+			"stopAtEntry": false,
+			"cwd": "${workspaceRoot}",
+			"environment": [],
+			"externalConsole": false
+		}
+	
+	]
+}

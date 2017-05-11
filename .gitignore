@@ -1,0 +1,50 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Pre-compiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executable
+*.exe
+*.out
+*.app
+
+# Folder
+bin/
+*.browse.VC.db
+*.browse.VC.db-shm
+*.browse.VC.db-wal
+*.db
+*.db-shm
+*.db-wal
+
+#windows debug
+*.pdb
+
+#laytex
+*.aux
+*.dvi
+*.log
+*.pdf
+*.bbl
+*.blg
+*.zip
+notes
