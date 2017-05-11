@@ -27,11 +27,9 @@ FLAGS =-W -ggdb -std=c++11 -pthread
 SOURCE_DIR = source/
 HEADERS_DIR = headers/
 
-all: driver driver_puzzel
+all: driver
 
 driver: $(SOURCE_DIR)driver.cpp | make_dir
-	$(COMPILER) $(FLAGS) $(HEADERS_DIR)dijkstra.hpp $(SOURCE_DIR)driver.cpp  -o $(OUTPUT_DIR)/driver.o
-driver_puzzel: $(SOURCE_DIR)driver_puzzel.cpp | make_dir
-	$(COMPILER) $(FLAGS) $(HEADERS_DIR)dijkstra.hpp $(SOURCE_DIR)driver_puzzel.cpp  -o $(OUTPUT_DIR)/driver_puzzel.o
+	$(COMPILER) $(FLAGS) $(SOURCE_DIR)driver.cpp  -o $(OUTPUT_DIR)/driver.o
 make_dir:
 	mkdir -p $(OUTPUT_DIR) | mkdir -p data
