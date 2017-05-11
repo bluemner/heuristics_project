@@ -5,6 +5,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <map>
+
+
 void successor(){
 }
 
@@ -39,22 +41,22 @@ int heuristic_function(std::vector<std::vector<int>> &current,
 
 void shift_col(int col, int n,
 			   std::vector<std::vector<int>> &matrix,
-			   std::vector<std::vector<int>> &result)
+			    std::vector<std::vector<std::vector<int>>> &result)
 {
 
 	int shift = 0;
 	result = std::vector<std::vector<std::vector<int>>>(2);
 	result[0] = matrix;
 	result[1] = matrix;
-	//left
+	//Up
 	for( int i = 0; i < matrix.size(); i++ ){ 
 		shift = (i + n) % matrix.size();
-		result[0][row][i]=matrix[row][shift];
+		result[0][i][col]=matrix[shift][col];
 	}
-	//right
+	//Down
 	for( int i = 0; i < matrix.size(); i++ ){ 
 		shift = (i-n <0)? i-n+ matrix.size(): (i-n);
-		result[1][row][i]=matrix[row][shift];
+		result[1][i][col]=matrix[shift][col];
 	}
 
 }
@@ -124,11 +126,19 @@ int main(int argc, char* argv[])
 	std::cout<< "H:" << h <<std::endl;
 
 	std::vector<std::vector<std::vector<int>>> result;
-	shift_row(0,1,start,result);
 	
+	shift_row(0,1,start,result);
+	std::cout<<"============== ROW ============="<<std::endl;
 	print(result[0]);
 	std::cout<<std::endl;
 	print(result[1]);
-	
+	result.empty();
+	std::cout<<"============= COLUMN ==========="<<std::endl;
+	shift_col(0,1,start,result);
+
+	print(result[0]);
+	std::cout<<std::endl;
+	print(result[1]);
+
 	return 0;
 }
