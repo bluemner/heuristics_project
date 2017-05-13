@@ -144,11 +144,11 @@ void get_next_node(std::vector<std::vector<int>> &current,std::vector<std::vecto
 				{
 					continue;
 				}
-				int heuristic =(disable_heuristic)? 0 :	heuristic_function(result[k],goal);
+				//int heuristic =(disable_heuristic)? 0 :	heuristic_function(result[k],goal);
 
-				if(check.find(hash) ==  check.end() || check[hash]> heuristic + j){
-					check[hash] = heuristic +j;
-					next[result[k]]=  heuristic +j;
+				if(check.find(hash) ==  check.end() || check[hash]> j){
+					check[hash] = j; //+heuristic;
+					next[result[k]]=  j; //+heuristic;
 				}
 			}// For -k
 
@@ -161,10 +161,10 @@ void get_next_node(std::vector<std::vector<int>> &current,std::vector<std::vecto
 				{
 					continue;
 				}
-				int heuristic = (disable_heuristic)? 0 : heuristic_function(result[k],goal);
-				if(check.find(hash) ==  check.end() || check[hash]> heuristic + j){
-					check[hash] = heuristic +j;
-					next[result[k]]=  heuristic +j;
+				//	int heuristic = (disable_heuristic)? 0 : heuristic_function(result[k],goal);
+				if(check.find(hash) ==  check.end() || check[hash]>  j){
+					check[hash] = j;
+					next[result[k]]= j;
 				}
 			}// For -k
 		}// for - j
@@ -221,15 +221,15 @@ int main(int argc, char* argv[])
 	std::vector<std::vector<int>> start=
 	{
 		//// 4 x 4
-		{16,15,14,13},
-		{12,11,10, 9},
-		{ 8, 7, 6, 5},
-		{ 4, 3, 2, 1}
+		// {16,15,14,13},
+		// {12,11,10, 9},
+		// { 8, 7, 6, 5},
+		// { 4, 3, 2, 1}
 
 		//// 3 x 3
-		// {9,8,7},
-		// {6,5,4},
-		// {3,2,1}
+		{9,8,7},
+		{6,5,4},
+		{3,2,1}
 
 		//// 2 x 2 
 		// {4,3},
@@ -239,14 +239,14 @@ int main(int argc, char* argv[])
 	std::vector<std::vector<int>> goal=
 	{
 		//// 4 x 4
-		{ 1, 2, 3, 4},
-		{ 5, 6, 7, 8},
-		{ 9,10,11,12},
-		{13,14,15,16}
+		// { 1, 2, 3, 4},
+		// { 5, 6, 7, 8},
+		// { 9,10,11,12},
+		// {13,14,15,16}
 		//// 3 x 3
-		// {1,2,3},
-		// {4,5,6},
-		// {7,8,9}
+		{1,2,3},
+		{4,5,6},
+		{7,8,9}
 
 		//// 2 x 2 
 		// {1,2},
@@ -257,15 +257,15 @@ int main(int argc, char* argv[])
 		std::vector<std::vector<int>> apple=
 	{
 		//// 4 x 4
-		{ 3, 4, 1, 2},
-		{ 5, 6, 7, 8},
-		{ 9,10,11,12},
-		{13,14,15,16}
+		// { 3, 4, 1, 2},
+		// { 5, 6, 7, 8},
+		// { 9,10,11,12},
+		// {13,14,15,16}
 
 		//// 3 x 3
-		// {9,8,7},
-		// {6,5,4},
-		// {3,2,1}
+		{9,8,7},
+		{6,5,4},
+		{3,2,1}
 
 		//// 2 x 2 
 		// {4,3},
@@ -313,24 +313,26 @@ int main(int argc, char* argv[])
 	// print(result[0]);
 	// std::cout<<std::endl;
 	// print(result[1]);
-	std::cout<<"============= Next  ==========="<<std::endl;
+
+	// std::cout<<"============= Next  ==========="<<std::endl;
 	
-	std::map<std::vector<std::vector<int>>, long> _next;
-	get_next_node(start,goal,_next);
-	for(auto n: _next){
-		auto a = n.first;
-		auto b = n.second;
-		std::cout <<"---------------------------------" << std::endl;
-		std::cout <<"Cost:"<< b<< std::endl;
-		print(a);
-		std::cout <<"---------------------------------" << std::endl;
-	}
+	// std::map<std::vector<std::vector<int>>, long> _next;
+	// get_next_node(start,goal,_next);
+	// for(auto n: _next){
+	// 	auto a = n.first;
+	// 	auto b = n.second;
+	// 	std::cout <<"---------------------------------" << std::endl;
+	// 	std::cout <<"Cost:"<< b<< std::endl;
+	// 	print(a);
+	// 	std::cout <<"---------------------------------" << std::endl;
+	// }
+	
+	std::cout<<"============= Algorithm  ==========="<<std::endl;
 	//source target
 	std::map<long long int, long long int>path;
 	std::map<long long int, long> cost;
 	std::map< long long int, std::vector<std::vector<int>> > look_up;
 
-	std::cout<<"============= Algorithm  ==========="<<std::endl;
 	//search(start,goal,path,cost, look_up);
 	auto start_time = std::chrono::system_clock::now();
 	auto start_cpu = std::clock();
@@ -372,7 +374,7 @@ int main(int argc, char* argv[])
 	std::cout<< "Running time Algorithm:\t" << diff.count() <<"s" << std::endl;			
 	std::cout<< "cpu start: "<< start_cpu << "\t" <<"cpu end:"<<end_cpu<<"\tCLOCKS_PER_SEC:"<<CLOCKS_PER_SEC  <<std::endl;		
 	double cpu = (end_cpu - start_cpu) / (double)CLOCKS_PER_SEC ;			
-	std::cout<< "cpu time(includes std::cout):\t" <<cpu<<"s" << std::endl;
+	std::cout<< "cpu time:\t" <<cpu<<"s" << std::endl;
 	return 0;
 }
 typedef std::pair<long long int, int> QueueItem;
@@ -434,13 +436,15 @@ void dijkstra ( std::vector<std::vector<int>> &start,
 		{
 			auto neighbors_node = nxt.first;
 			auto neighbors_hash = get_hash_value(neighbors_node);
-			auto neighbors_cost = _next[neighbors_node];
+			int heuristic =(disable_heuristic)? 0 :	heuristic_function(neighbors_node,goal);;
+			
+			auto neighbors_cost = _next[neighbors_node]+heuristic;
 			// If the frontier and the explored section is empty then add to front. 
 			if(visited.find(neighbors_hash) == visited.end() ||
 			   front.find(neighbors_hash) == front.end() )
 			{
 				path[neighbors_hash] = current_hash;
-				cost[neighbors_hash] = neighbors_cost;
+				cost[neighbors_hash] = neighbors_cost -heuristic;
 				look_up[neighbors_hash] = neighbors_node;
 				
 				auto item = QueueItem(neighbors_hash, heuristic_function(neighbors_node, goal));
@@ -450,7 +454,7 @@ void dijkstra ( std::vector<std::vector<int>> &start,
 			{
 				if(neighbors_hash !=current_hash &&  curret_cost > neighbors_cost ){
 					path[neighbors_hash] =current_hash;
-					cost[neighbors_hash] = _next[current_node];
+					cost[neighbors_hash] = neighbors_cost -heuristic;
 				}
 			}
 			else // IF in explored Update value
