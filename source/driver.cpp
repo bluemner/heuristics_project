@@ -87,7 +87,6 @@ void shift_col(int col, int n,
 			   std::vector<std::vector<int>> &matrix,
 			    std::vector<std::vector<std::vector<int>>> &result)
 {
-
 	int shift = 0;
 	result = std::vector<std::vector<std::vector<int>>>(2);
 	result[0] = matrix;
