@@ -30,7 +30,7 @@ template<typename T, typename I>
 		bool operator()(std::pair<T,I> const& a, std::pair<T,I> const& b) const
 		{
 			
-			return (a.second == b.second)? a.first < b.first : a.second > b.second;
+			return (a.second == b.second)? true : a.second > b.second;
 		}
 	};
 // Given n x n matrix create a unique hash
@@ -221,15 +221,15 @@ int main(int argc, char* argv[])
 	std::vector<std::vector<int>> start=
 	{
 		//// 4 x 4
-		// {16,15,14,13},
-		// {12,11,10, 9},
-		// { 8, 7, 6, 5},
-		// { 4, 3, 2, 1}
+		{16,15,14,13},
+		{12,11,10, 9},
+		{ 8, 7, 6, 5},
+		{ 4, 3, 2, 1}
 
 		//// 3 x 3
-		{9,8,7},
-		{6,5,4},
-		{3,2,1}
+		// {9,8,7},
+		// {6,5,4},
+		// {3,2,1}
 
 		//// 2 x 2 
 		// {4,3},
@@ -239,14 +239,14 @@ int main(int argc, char* argv[])
 	std::vector<std::vector<int>> goal=
 	{
 		//// 4 x 4
-		// { 1, 2, 3, 4},
-		// { 5, 6, 7, 8},
-		// { 9,10,11,12},
-		// {13,14,15,16}
+		{ 1, 2, 3, 4},
+		{ 5, 6, 7, 8},
+		{ 9,10,11,12},
+		{13,14,15,16}
 		//// 3 x 3
-		{1,2,3},
-		{4,5,6},
-		{7,8,9}
+		// {1,2,3},
+		// {4,5,6},
+		// {7,8,9}
 
 		//// 2 x 2 
 		// {1,2},
@@ -263,9 +263,9 @@ int main(int argc, char* argv[])
 		// {13,14,15,16}
 
 		//// 3 x 3
-		{9,8,7},
-		{6,5,4},
-		{3,2,1}
+		// {9,8,7},
+		// {6,5,4},
+		// {3,2,1}
 
 		//// 2 x 2 
 		// {4,3},
@@ -447,7 +447,7 @@ void dijkstra ( std::vector<std::vector<int>> &start,
 				cost[neighbors_hash] = neighbors_cost -heuristic;
 				look_up[neighbors_hash] = neighbors_node;
 				
-				auto item = QueueItem(neighbors_hash, heuristic_function(neighbors_node, goal));
+				auto item = QueueItem(neighbors_hash, neighbors_cost + heuristic_function(neighbors_node, goal));
 				frontier.push(item);
 				front.insert(neighbors_hash);
 			}else if(front.find(neighbors_hash) != front.end())
