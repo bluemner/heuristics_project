@@ -22,12 +22,6 @@ void dijkstra (
 				std::map<long long int, long> &cost,
 				std::map< long long int, std::vector<std::vector<int>> > &look_up
 			);
-void search(std::vector<std::vector<int>> &start,
-				std::vector<std::vector<int>> &goal,
-				std::map<long long int, long long int> &path,
-				std::map<long long int, long> &cost,
-				std::map< long long int, std::vector<std::vector<int>> > &look_up);
-
 template<typename T, typename I>
 	class Order	{
 		public:
@@ -48,8 +42,8 @@ long long int get_hash_value(std::vector<std::vector<int>> &matrix){
 			//if(i==0 && j ==0) continue;
 			// xx xx xxxx
 			// row + col + number		
-			auto row = (long long int)  (  (i+1)  * std::pow(10, (matrix.size()-1 ) *2));
-			auto col = (long long int)  ( (j+1) *  std::pow(10,matrix.size()-1));
+			auto row = (long long int)  ( (i+1) * std::pow(10, (matrix.size()-1 ) *2));
+			auto col = (long long int)  ( (j+1) * std::pow(10,matrix.size()-1));
 			long long int temp  = row +  col+ matrix[i][j];
 			std::hash<long long int> hasher;
 			auto _hash  = hasher(temp) ;
@@ -76,7 +70,7 @@ void get_position(int n, std::vector<std::vector<int>> &matrix, int * result){
 int heuristic_function(std::vector<std::vector<int>> &current,
 					   std::vector<std::vector<int>> &goal )
 {
-	int cost = 0;//std::numeric_limits<int>::max();
+	int cost = 0;
 	int temp[2]={0,0};
 	for(int i=0; i < current.size(); i++ ){
 		for(int j=0; j< current.at(i).size(); j++ ){
@@ -143,12 +137,14 @@ void get_next_node(std::vector<std::vector<int>> &current,std::vector<std::vecto
 			result.empty();
 			shift_row(i,j,current, result);
 			for(int k =0; k<result.size(); k++){
-				int heuristic =(disable_heuristic)? 0 :	heuristic_function(result[k],goal);
+			
 				long long int hash = get_hash_value(result[k]);
 				if(visited.find(hash) != visited.end()  )
 				{
-					//continue;
-				}else
+					continue;
+				}
+				int heuristic =(disable_heuristic)? 0 :	heuristic_function(result[k],goal);
+
 				if(check.find(hash) ==  check.end() || check[hash]> heuristic + j){
 					check[hash] = heuristic +j;
 					next[result[k]]=  heuristic +j;
@@ -158,12 +154,13 @@ void get_next_node(std::vector<std::vector<int>> &current,std::vector<std::vecto
 			result.empty();
 			shift_col(i,j,current, result);
 			for(int k =0; k<result.size(); k++){
-				int heuristic = (disable_heuristic)? 0 :	heuristic_function(result[k],goal);
+				
 				long long int hash = get_hash_value(result[k]);
 				if(visited.find(hash) != visited.end()  )
 				{
-				//	continue;
-				}else
+					continue;
+				}
+				int heuristic = (disable_heuristic)? 0 : heuristic_function(result[k],goal);
 				if(check.find(hash) ==  check.end() || check[hash]> heuristic + j){
 					check[hash] = heuristic +j;
 					next[result[k]]=  heuristic +j;
@@ -210,23 +207,68 @@ void get_min(std::map<std::vector<std::vector<int>>, long> _next,
 //
 int main(int argc, char* argv[])
 {
+	if(argc > 1 ){
+		for(int i=1;i<argc; ++i){
+			if(argv[i] == "-dheuristic"){
+				disable_heuristic = true;
+			}
+			else{
+				std::cout<<"Unkown argument command type: -help , for a list of commands." << std::endl;
+			}
+		}
+	}
 	std::vector<std::vector<int>> start=
 	{
-		{9,8,7},
-		{6,5,4},
-		{3,2,1}
+		//// 4 x 4
+		{16,15,14,13},
+		{12,11,10, 9},
+		{ 8, 7, 6, 5},
+		{ 4, 3, 2, 1}
+
+		//// 3 x 3
+		// {9,8,7},
+		// {6,5,4},
+		// {3,2,1}
+
+		//// 2 x 2 
 		// {4,3},
 		// {2,1}
 	};
 
 	std::vector<std::vector<int>> goal=
 	{
-		{1,2,3},
-		{4,5,6},
-		{7,8,9}
+		//// 4 x 4
+		{ 1, 2, 3, 4},
+		{ 5, 6, 7, 8},
+		{ 9,10,11,12},
+		{13,14,15,16}
+		//// 3 x 3
+		// {1,2,3},
+		// {4,5,6},
+		// {7,8,9}
+
+		//// 2 x 2 
 		// {1,2},
 		// {3,4}
 
+	};
+
+		std::vector<std::vector<int>> apple=
+	{
+		//// 4 x 4
+		{ 3, 4, 1, 2},
+		{ 5, 6, 7, 8},
+		{ 9,10,11,12},
+		{13,14,15,16}
+
+		//// 3 x 3
+		// {9,8,7},
+		// {6,5,4},
+		// {3,2,1}
+
+		//// 2 x 2 
+		// {4,3},
+		// {2,1}
 	};
 
 	std::cout<< "Start Hash:" << get_hash_value(start) <<std::endl;
@@ -235,8 +277,8 @@ int main(int argc, char* argv[])
 	std::cout<< "Goal Hash:" << get_hash_value(goal) <<std::endl;
 	long long int goal_hash = get_hash_value(goal);
 	long long int start_hash =get_hash_value(start);
-
-	disable_heuristic = false;
+	
+	
 	// std::vector<std::vector<std::vector<int>>> result;
 
 
@@ -270,18 +312,18 @@ int main(int argc, char* argv[])
 	// print(result[0]);
 	// std::cout<<std::endl;
 	// print(result[1]);
-	// std::cout<<"============= Next  ==========="<<std::endl;
+	std::cout<<"============= Next  ==========="<<std::endl;
 	
-	// std::map<std::vector<std::vector<int>>, long> _next;
-	// get_next_node(start,goal,_next);
-	// for(auto n: _next){
-	// 	auto a = n.first;
-	// 	auto b = n.second;
-	// 	std::cout <<"---------------------------------" << std::endl;
-	// 	std::cout <<"Cost:"<< b<< std::endl;
-	// 	print(a);
-	// 	std::cout <<"---------------------------------" << std::endl;
-	//}
+	std::map<std::vector<std::vector<int>>, long> _next;
+	get_next_node(start,goal,_next);
+	for(auto n: _next){
+		auto a = n.first;
+		auto b = n.second;
+		std::cout <<"---------------------------------" << std::endl;
+		std::cout <<"Cost:"<< b<< std::endl;
+		print(a);
+		std::cout <<"---------------------------------" << std::endl;
+	}
 	//source target
 	std::map<long long int, long long int>path;
 	std::map<long long int, long> cost;
@@ -349,15 +391,19 @@ void dijkstra ( std::vector<std::vector<int>> &start,
 	long long int previous_hash=get_hash_value(start);
 
 	look_up[previous_hash]=start;
-	
+	int counter =0;
 	while( frontier.size() > 0 )
 	{
+		++counter;
+		if(counter % 500 ==0)
+			std::cout << "Frontier Iteration: "<<counter <<std::endl;
 		current_node= look_up[frontier.top().first];
 		current_hash =	frontier.top().first;
 		frontier.pop();
-		// if(front.find(current_hash) != front.end()){
-		// 		front.erase(front.find(current_hash));
-		// }
+		visited.insert(current_hash);
+		if(front.find(current_hash) != front.end()){
+			front.erase(front.find(current_hash));
+		}
 		
 		auto curret_cost = cost[current_hash];
 		
@@ -370,8 +416,7 @@ void dijkstra ( std::vector<std::vector<int>> &start,
 
 		// Get neighbors
 		get_next_node(current_node,goal,_next);
-		visited.insert(current_hash);
-
+		
 		auto previous_cost = cost[current_hash];
 
 		for(auto nxt : _next)
@@ -379,17 +424,14 @@ void dijkstra ( std::vector<std::vector<int>> &start,
 			auto neighbors_node = nxt.first;
 			auto neighbors_hash = get_hash_value(neighbors_node);
 			auto neighbors_cost = _next[neighbors_node];
-			
+			// If the frontier and the explored section is empty then add to front. 
 			if(visited.find(neighbors_hash) == visited.end() ||
 			   front.find(neighbors_hash) == front.end() )
 			{
 				path[neighbors_hash] = current_hash;
 				cost[neighbors_hash] = neighbors_cost;
 				look_up[neighbors_hash] = neighbors_node;
-				if(neighbors_cost == 0){
-					std::cout<< "Probelm with ::" << neighbors_hash << std::endl;
-					continue;
-				}
+				
 				auto item = QueueItem(neighbors_hash, heuristic_function(neighbors_node, goal));
 				frontier.push(item);
 				front.insert(neighbors_hash);
@@ -400,7 +442,7 @@ void dijkstra ( std::vector<std::vector<int>> &start,
 					cost[neighbors_hash] = _next[current_node];
 				}
 			}
-			else // IF EXP Update value
+			else // IF in explored Update value
 			 if( visited.find(neighbors_hash) != visited.end()){
 				if(neighbors_hash !=current_hash &&  curret_cost > neighbors_cost ){
 					path[neighbors_hash] =current_hash;
@@ -414,69 +456,5 @@ void dijkstra ( std::vector<std::vector<int>> &start,
 
 		previous_hash =current_hash;
 		prev_node = current_node;
-	}
-}
-
-void search(std::vector<std::vector<int>> &start,
-				std::vector<std::vector<int>> &goal,
-				std::map<long long int, long long int> &path,
-				std::map<long long int, long> &cost,
-				std::map< long long int, std::vector<std::vector<int>> > &look_up)
-{
-
-	visited.clear();
-
-	long long int goal_hash = get_hash_value(goal);
-	long long int start_hash =get_hash_value(start);
-
-	visited.insert(start_hash);
-	look_up[start_hash] = start;
-
-
-	std::map<std::vector<std::vector<int>>, long> _next;
-	
-	std::priority_queue <QueueItem, std::vector<QueueItem>, std::greater<QueueItem>  > frontier;
-	frontier.push( QueueItem(start_hash, heuristic_function(start, goal)));
-	std::vector<std::vector<int>> current_node = start;
-	std::vector<std::vector<int>> prev_node;
-	long long int current_hash;
-	long long int previous_hash=get_hash_value(start);
-
-	look_up[previous_hash]=start;
-	get_next_node(current_node,goal,_next);
-	while( _next.size() > 0 ){
-		get_min(_next, current_node);
-		_next.erase(current_node);
-		get_next_node(current_node,goal,_next);
-		auto current_hash =	 get_hash_value(current_node);
-		if(visited.find(current_hash) != visited.end()){
-			if(current_hash !=previous_hash && ( path.find(current_hash) == path.end() || cost[current_hash]>= _next[current_node]) ){
-				path[current_hash] = previous_hash ;
-				cost[current_hash] = _next[current_node];
-			}
-			_next.erase(current_node);
-			continue;
-		}else{
-			look_up[current_hash] = current_node;
-			visited.insert(current_hash);
-		}
-
-		if( cost.find(current_hash) == cost.end() ){
-			cost[current_hash] = _next[current_node];
-		}
-		if(current_hash !=previous_hash && ( path.find(current_hash) == path.end() || cost[current_hash]>= _next[current_node]) ){
-			path[current_hash] = previous_hash;
-			cost[current_hash] = _next[current_node];
-		}
-
-		if( current_hash == goal_hash ){
-			path[current_hash] = previous_hash ;
-			std::cout << "Found!!" <<"\nVisited count:"<< visited.size() << std::endl;
-			break;
-		}
-		if( _next.size() == 0 ){
-			std::cout << "Fail"<< std::endl;
-		}
-		previous_hash =current_hash;
 	}
 }
