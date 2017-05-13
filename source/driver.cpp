@@ -10,6 +10,8 @@
 #include <functional>
 #include <queue>
 #include <cassert>
+#include <chrono>
+#include <ctime>
 
 std::set<long long int> visited;
 std::set<long long int> front;
@@ -330,7 +332,14 @@ int main(int argc, char* argv[])
 
 	std::cout<<"============= Algorithm  ==========="<<std::endl;
 	//search(start,goal,path,cost, look_up);
+	auto start_time = std::chrono::system_clock::now();
+	auto start_cpu = std::clock();
+	
 	dijkstra(start,goal,path,cost, look_up);
+
+	auto end = std::chrono::system_clock::now();
+	auto end_cpu = std::clock();
+	std::chrono::duration<double> diff = end-start_time;
 	// for(auto n : path){
 	// 		std::cout << n.first <<"<-" << n.second << std::endl;
 	// }
@@ -353,7 +362,6 @@ int main(int argc, char* argv[])
 		std::cout << cur <<std::endl;
 
 		if(cur == 0 || cur ==start_hash || cost[cur] ==0 ){
-			//std::cout<<"Problem with lookup" << std::endl;
 			break;
 		}
 			
@@ -361,6 +369,10 @@ int main(int argc, char* argv[])
 	}
 	print(start);
 	std::cout<<"Path size: "<<count <<"\tCost: "<< total_cost <<  std::endl;
+	std::cout<< "Running time Algorithm:\t" << diff.count() <<"s" << std::endl;			
+	std::cout<< "cpu start: "<< start_cpu << "\t" <<"cpu end:"<<end_cpu<<"\tCLOCKS_PER_SEC:"<<CLOCKS_PER_SEC  <<std::endl;		
+	double cpu = (end_cpu - start_cpu) / (double)CLOCKS_PER_SEC ;			
+	std::cout<< "cpu time(includes std::cout):\t" <<cpu<<"s" << std::endl;
 	return 0;
 }
 typedef std::pair<long long int, int> QueueItem;

@@ -41,7 +41,6 @@
 Algorithmic approach to the Matrix Shifting Puzzle
 \end{abstract}
 
-
 % =================================================
 % Overview
 % =================================================
@@ -49,9 +48,9 @@ Algorithmic approach to the Matrix Shifting Puzzle
 \subsection{Matrix shifting Puzzle}
 Let $M$ be an $n \times n$ array of numbers 1 through $n^2$,
 each move $rotate(row,p)$ or $rotate(col,p)$ cost p s.t. $p \in [0...n-1]$
-rotate would yield two options, rotate left or rotate right, which will have
-an impact on the out come of the algorithm. The objective is to find the minimum cost
-from start state $\Rightarrow$ goal state.
+rotate would yield two options, rotate left or rotate right, which will 
+have an impact on the out come of the algorithm. The objective is to find
+the minimum cost from start state $\Rightarrow$ goal state.
 \section{Implementation}
 % =================================================
 % Heuristic function
@@ -59,6 +58,10 @@ from start state $\Rightarrow$ goal state.
 \subsection{Heuristic function}
 The code implements a triangle distance Heuristic.
 Trying to find the approximate distance of the diagonal.
+This is done by finding the distance from the two points of the grid
+start at $(current_x,current_y) \rightarrow (goal_x,goal_y)$. 
+The sum absolute value of the difference with respect to the partials is
+the used to get the current value. 
 \begin{lstlisting}
 	int cost = 0;
 	int temp[2]={0,0};
@@ -79,22 +82,43 @@ Trying to find the approximate distance of the diagonal.
 A problem that arises with any Implementation of a board state
 game is how to represent a state with the minimum amount of data.
 One solution is Hashing or using a number or string to represent a state.
-This Implementation uses a custom hashing method based off of Zobrist Hashing \cite{ Zobrist}
-used in chess like board games.
+This Implementation uses a custom hashing method based off of Zobrist 
+Hashing \cite{Zobrist}used in chess like board games. This hash code is
+used to prevent recalculation of the Heuristic function an getting into
+a cycle in the algorithm. 
+\begin{lstlisting}
+long long int get_hash_value(std::vector<std::vector<int>> &matrix){
+	long long int result =0;	
+	for(int i=0; i< matrix.size();i++){
+		for(int j=0; j<matrix[i].size(); j++){
+			auto row = (long long int)  ( (i+1) * std::pow(10, (matrix.size()-1 ) *2));
+			auto col = (long long int)  ( (j+1) * std::pow(10,matrix.size()-1));
+			long long int temp  = row +  col+ matrix[i][j];
+			std::hash<long long int> hasher;
+			auto _hash  = hasher(temp) ;
+			result ^=  _hash +  0x9e3779b9   + (result<<6) + (result>>2); 
+		}
+	}
+\end{lstlisting}
 % =================================================
 % Search Algorithm function
 % =================================================
 \subsection{Algorithm}
 The algorithm used in this project was a modified version of $A*$.
-Some major changes are the Implementation of hashing to improve the running time.
-This is done when the algorithm checks which nodes are in the frontier or explored section
-the hashing function gets cached on the cpu thus causing a moderate speed gain.
+Some major changes are the Implementation of hashing to improve the 
+running time.This is done when the algorithm checks which nodes are in
+the frontier or explored section the hashing function gets cached on
+the  cpu thus causing a moderate speed gain.
 % =================================================
 % Sources of error
 % =================================================
 \section{Sources of error}
 \subsection{Architecture}
-During my initial runs 
+Introducing hashing caused some ``error'' int the application.
+This is due to how the compare method works for the minimum priority queue, 
+in the event of a tie the smaller hash is used this has an impact because
+each compiler will generate the $std::hash<>()$ function differently thus
+causing discrepancies between each system.
 \bibliographystyle{unsrt}
 \bibliography{bib}
 
