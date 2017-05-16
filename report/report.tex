@@ -55,12 +55,13 @@ the minimum cost from start state $\Rightarrow$ goal state.
 % Heuristic function
 % =================================================
 \subsection{Heuristic function}
-The code implements a triangle distance Heuristic.
-Trying to find the approximate distance of the diagonal.
+The code implements a relative distance.
+Trying to find the approximate distance to gaol.
 This is done by finding the distance from the two points of the grid
 start at $(current_x,current_y) \rightarrow (goal_x,goal_y)$. 
 The sum absolute value of the difference with respect to the partials is
-the used to get the current value. 
+the used to get the current value. (see Figure \ref{fig:h_func})
+\begin{figure}
 \begin{lstlisting}
 	int cost = 0;
 	int temp[2]={0,0};
@@ -74,6 +75,34 @@ the used to get the current value.
 	}
 	return cost;
 \end{lstlisting}
+\caption{Heuristic function}
+\label{fig:h_func}
+\end{figure}
+
+Anther attempt was made on the same code base with the following 
+change to line 8 of Figure \ref{fig:h_func} as shown in Figure \ref{fig:h_func_1}
+\begin{figure}
+\begin{lstlisting}
+			cost +=  ((int) (std::sqrt( dx*dx + dy*dy )))
+	
+\end{lstlisting}
+\caption{Heuristic function Change}
+\label{fig:h_func_1}
+\end{figure}
+This yield a worst result and significate performance impact, which if you consider
+the math abs can be simplified by using a bit ``hack'' (see Figure \ref{fig:bit_twiddle}) which
+can eliminate computational steps compared to takeing the square root. 
+\begin{figure}
+	\begin{lstlisting}
+	int my_abs(int x)
+	{
+		int s = x >> 31;
+		return (x ^ s) - s;
+	}
+	\end{lstlisting}
+	\caption{Example abs implementation}
+	\label{fig:bit_twiddle}
+\end{figure}
 % =================================================
 % Hashing function
 % =================================================
@@ -85,6 +114,7 @@ This Implementation uses a custom hashing method based off of Zobrist
 Hashing \cite{Zobrist}used in chess like board games. This hash code is
 used to prevent recalculation of the Heuristic function an getting into
 a cycle in the algorithm. 
+\begin{figure}
 \begin{lstlisting}
 long long int get_hash_value(std::vector<std::vector<int>> &matrix){
 	long long int result =0;	
@@ -99,25 +129,72 @@ long long int get_hash_value(std::vector<std::vector<int>> &matrix){
 		}
 	}
 \end{lstlisting}
+	\caption{Hashing Code segment}
+	\label{fig:Hashing}
+\end{figure}
 % =================================================
 % Search Algorithm function
 % =================================================
 \subsection{Algorithm}
 The algorithm used in this project was a modified version of $A*$.
 Some major changes are the Implementation of hashing to improve the 
-running time.This is done when the algorithm checks which nodes are in
+running time by eliminating checks when nodes are in
 the frontier or explored section the hashing function gets cached on
-the  cpu thus causing a moderate speed gain.
+the cpu and ram thus causing a moderate speed gain.
 % =================================================
 % Sources of error
 % =================================================
 \section{Sources of error}
-\subsection{Architecture}
-Introducing hashing caused some ``error'' int the application.
-This is due to how the compare method works for the minimum priority queue, 
-in the event of a tie the smaller hash is used this has an impact because
-each compiler will generate the $std::hash<>()$ function differently thus
-causing discrepancies between each system.
+\subsection{Compiler}
+Introducing hashing caused some ``error'' into the application.
+This is due to how hashing is implemented in the compiler (or windows debugger), running 
+the code on windows seems to yield a less accrete result, where accuracy 
+is gauge by minimum cost. 
+\\
+\\
+Below is an out put running on PC (see \ref{PC})
+\\
+**Note: the running time for windows includes
+the loading to the debugging library for a pdb file (as window runs the debugger)
+\\
+Visual C++ \textsuperscript{TM}
+\begin{lstlisting}
+Path size: 156	Cost: 180
+Running time Algorithm:	42.9065s
+cpu start: 54	cpu end:42961	CLOCKS_PER_SEC:1000
+cpu time:	42.907s
+\end{lstlisting}
+GNU g++ 
+\begin{lstlisting}
+Path size: 153  Cost: 178
+Running time Algorithm: 20.0533s
+cpu start: 15625	cpu end:19828125	CLOCKS_PER_SEC:1000000
+cpu time:	19.8125s
+\end{lstlisting}
+
+
+\section{System}
+\subsection{IDE}\label{IDE}
+This code was programming in Visual Studio Code\cite{vscode} which an MIT ``Source Code'' editor
+and debugger. which also has the 
+\subsection{PC} \label{PC}
+Cpu: Intel(R) Core(TM) i5-6600K CPU @3.50 GHz (stock) boost to 4.10GHz
+\\
+RAM: 16GB DDR4
+\\
+Operating System: Window 10
+\subsection{Laptop} \label{Laptop}
+Cpu: Intel(R) Celeron(TM)  N3150 Quad-core 1.60 GHz (stock) boost to 1.8GHz
+\\
+RAM: 8GB DDR3L
+\\
+Operating System: Window 10
+\subsection{Server} \label{Server}
+Cpu Intel(R) Xenon(R) CPU E5345 @ 2.33 GHZ (4 cores allocated to vm with hyper-threading)
+\\
+RAM: 8GB DDR2 - ECC  (Error correcting Memory)
+\\
+Operating System: Ubuntu Server (running on a hypervisor)
 \bibliographystyle{unsrt}
 \bibliography{bib}
 

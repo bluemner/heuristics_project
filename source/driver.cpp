@@ -16,6 +16,8 @@
 std::set<long long int> visited;
 std::set<long long int> front;
 bool disable_heuristic = false;
+
+
 void print(std::vector<std::vector<int>> &matrix);
 void dijkstra (
 				std::vector<std::vector<int>> &start,
@@ -25,14 +27,14 @@ void dijkstra (
 				std::map< long long int, std::vector<std::vector<int>> > &look_up
 			);
 template<typename T, typename I>
-	class Order	{
-		public:
-		bool operator()(std::pair<T,I> const& a, std::pair<T,I> const& b) const
-		{
-			
-			return (a.second == b.second)? true : a.second > b.second;
-		}
-	};
+class Order	{
+	public:
+	bool operator()(std::pair<T,I> const& a, std::pair<T,I> const& b) const
+	{
+		
+		return (a.second == b.second)? true : a.second > b.second;
+	}
+};
 // Given n x n matrix create a unique hash
 long long int get_hash_value(std::vector<std::vector<int>> &matrix){
 	//start at zero zero
@@ -124,11 +126,9 @@ void shift_row(int row, int n,
 		result[1][row][i]=matrix[row][shift];
 	}
 }
-
 void get_next_node(std::vector<std::vector<int>> &current,std::vector<std::vector<int>> &goal,
 		  std::map<std::vector<std::vector<int>>, long> &next)
 {
-
 	std::vector<std::vector<std::vector<int>>> result;
 	std::map<long long int, int> check;
 	// Row
@@ -151,7 +151,6 @@ void get_next_node(std::vector<std::vector<int>> &current,std::vector<std::vecto
 					next[result[k]]=  j; //+heuristic;
 				}
 			}// For -k
-
 			result.empty();
 			shift_col(i,j,current, result);
 			for(int k =0; k<result.size(); k++){
@@ -173,7 +172,7 @@ void get_next_node(std::vector<std::vector<int>> &current,std::vector<std::vecto
 
 void start(int size, std::vector<std::vector<int>> &result)
 {
-
+	
 }
 
 void goal(int size, std::vector<std::vector<int>> &result)
@@ -274,7 +273,6 @@ int main(int argc, char* argv[])
 
 	std::cout<< "Start Hash:" << get_hash_value(start) <<std::endl;
 
-
 	std::cout<< "Goal Hash:" << get_hash_value(goal) <<std::endl;
 	long long int goal_hash = get_hash_value(goal);
 	long long int start_hash =get_hash_value(start);
@@ -347,11 +345,6 @@ int main(int argc, char* argv[])
 	// }
 
 	long long int cur= goal_hash;
-	// for(auto n : look_up){
-	// 	std::cout <<"---------------------------------" << std::endl;
-	// 	print(n.second);
-	// 	std::cout <<"---------------------------------" << std::endl;
-	// }
 	print(goal);
 	int count =0;
 	int total_cost = 0;
@@ -422,7 +415,7 @@ void dijkstra ( std::vector<std::vector<int>> &start,
 		
 		if( current_hash == goal_hash )
 		{
-			std::cout << "Found!!" <<"\nVisited count:"<< visited.size() << std::endl;
+			std::cout << "Goal Found!!" <<"\nVisited count:"<< visited.size() << "\n" << std::endl;
 			break; 
 		}
 		_next.clear();
