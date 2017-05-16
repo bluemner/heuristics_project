@@ -170,14 +170,28 @@ void get_next_node(std::vector<std::vector<int>> &current,std::vector<std::vecto
 	}// for - i
 }
 
-void start(int size, std::vector<std::vector<int>> &result)
+void get_start(int size, std::vector<std::vector<int>> &result)
 {
-	
+	result = std::vector<std::vector<int>>(size);
+	int count =size *size; 
+	for(int i=0; i< size; ++i){
+		result[i] = std::vector<int>(size);
+		for(int j=0; j< size; ++j){
+			result[i][j]= count--;
+		}
+	}
 }
 
-void goal(int size, std::vector<std::vector<int>> &result)
+void get_goal(int size, std::vector<std::vector<int>> &result)
 {
-
+	result = std::vector<std::vector<int>>(size);
+	int count =1; 
+	for(int i=0; i< size; ++i){
+		result[i] = std::vector<int>(size);
+		for(int j=0; j< size; ++j){
+			result[i][j]= count++;
+		}
+	}
 }
 
 void print(std::vector<std::vector<int>> &matrix){
@@ -207,8 +221,15 @@ void get_min(std::map<std::vector<std::vector<int>>, long> _next,
 //
 int main(int argc, char* argv[])
 {
-	if(argc > 1 ){
-		for(int i=1;i<argc; ++i){
+	int _size_ = 2;
+	if( argc < 2){
+		std::cout<< "Provide a value for n" <<std::endl;
+	}else{
+		_size_ = std::stoi(argv[1]);
+	}
+
+	if(argc > 2 ){
+		for(int i=2;i<argc; ++i){
 			if(argv[i] == "-dheuristic"){
 				disable_heuristic = true;
 			}
@@ -217,59 +238,64 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
-	std::vector<std::vector<int>> start=
-	{
-		//// 4 x 4
-		{16,15,14,13},
-		{12,11,10, 9},
-		{ 8, 7, 6, 5},
-		{ 4, 3, 2, 1}
+	// std::vector<std::vector<int>> start=
+	// {
+	// 	//// 4 x 4
+	// 	{16,15,14,13},
+	// 	{12,11,10, 9},
+	// 	{ 8, 7, 6, 5},
+	// 	{ 4, 3, 2, 1}
 
-		//// 3 x 3
-		// {9,8,7},
-		// {6,5,4},
-		// {3,2,1}
+	// 	//// 3 x 3
+	// 	// {9,8,7},
+	// 	// {6,5,4},
+	// 	// {3,2,1}
 
-		//// 2 x 2 
-		// {4,3},
-		// {2,1}
-	};
+	// 	//// 2 x 2 
+	// 	// {4,3},
+	// 	// {2,1}
+	// };
 
-	std::vector<std::vector<int>> goal=
-	{
-		//// 4 x 4
-		{ 1, 2, 3, 4},
-		{ 5, 6, 7, 8},
-		{ 9,10,11,12},
-		{13,14,15,16}
-		//// 3 x 3
-		// {1,2,3},
-		// {4,5,6},
-		// {7,8,9}
+	// std::vector<std::vector<int>> goal=
+	// {
+	// 	//// 4 x 4
+	// 	{ 1, 2, 3, 4},
+	// 	{ 5, 6, 7, 8},
+	// 	{ 9,10,11,12},
+	// 	{13,14,15,16}
+	// 	//// 3 x 3
+	// 	// {1,2,3},
+	// 	// {4,5,6},
+	// 	// {7,8,9}
 
-		//// 2 x 2 
-		// {1,2},
-		// {3,4}
+	// 	//// 2 x 2 
+	// 	// {1,2},
+	// 	// {3,4}
 
-	};
+	// };
 
-		std::vector<std::vector<int>> apple=
-	{
-		//// 4 x 4
-		// { 3, 4, 1, 2},
-		// { 5, 6, 7, 8},
-		// { 9,10,11,12},
-		// {13,14,15,16}
+	// 	std::vector<std::vector<int>> apple=
+	// {
+	// 	//// 4 x 4
+	// 	// { 3, 4, 1, 2},
+	// 	// { 5, 6, 7, 8},
+	// 	// { 9,10,11,12},
+	// 	// {13,14,15,16}
 
-		//// 3 x 3
-		// {9,8,7},
-		// {6,5,4},
-		// {3,2,1}
+	// 	//// 3 x 3
+	// 	// {9,8,7},
+	// 	// {6,5,4},
+	// 	// {3,2,1}
 
-		//// 2 x 2 
-		// {4,3},
-		// {2,1}
-	};
+	// 	//// 2 x 2 
+	// 	// {4,3},
+	// 	// {2,1}
+	// };
+	std::vector<std::vector<int>> start;
+	get_start(_size_, start);
+	std::vector<std::vector<int>> goal;
+	get_goal(_size_,goal);
+	
 
 	std::cout<< "Start Hash:" << get_hash_value(start) <<std::endl;
 

@@ -145,8 +145,41 @@ the cpu and ram thus causing a moderate speed gain.
 % Result
 % =================================================
 \section{Results}
+The ``Path size'' will represent the transition between each state
+the ``Cost'' is the cost of the transition state not including the Heuristic function weight.
+
 \subsection{4x4 matrix}
-The results below are from a $x5$ run on the PC\ref{PC} 
+
+The results below are from a $\times5$ run on the PC(see \ref{PC}) with a 1000000 $CLOCKS PER SEC$
+\\
+Starting position:
+\begin{tabular}{ l }
+16 15 15 13\\
+12 11 10 09\\
+08 07 06 05\\
+04 03 02 01\end{tabular}
+$\Rightarrow$
+Goal:
+\begin{tabular}{ l }
+01 02 03 04\\
+05 06 07 08\\
+09 10 11 12\\
+13 14 15 16\end{tabular}
+\\ 
+\begin{tabular}{ | l | l | l | l | l | l | l | }
+\hline
+Run  & Path Size & Cost & Running Time Alg & Cpu Start & Cpu End & Total cpu time\\\hline
+1 & 153 & 178 & 19.3723s & 15625 & 19375000 & 19.3594s\\\hline
+2 & 153 & 178 & 19.2784s & 0 & 19281250 & 19.2812s\\\hline
+3 & 153 & 178 &  19.3407s & 15625 & 19281250 & 19.2656s\\\hline
+4 & 153 & 178 & 19.2833s & 0 & 19281250 & 19.2812s\\\hline
+5 & 153 & 178 & 19.2716s & 0 & 19281250 & 19.2812s\\\hline
+\end{tabular}
+\\
+\\
+The results has the same path size and cost, and close running time.
+From this data the algorithm is consistent with its result with path size.
+
 % =================================================
 % Sources of error
 % =================================================
