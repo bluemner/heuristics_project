@@ -401,8 +401,8 @@ void dijkstra ( std::vector<std::vector<int>> &start,
 	while( frontier.size() > 0 )
 	{
 		++counter;
-		if(counter % 500 ==0)
-			std::cout << "Frontier Iteration: "<<counter <<std::endl;
+		//if(counter % 500 ==0)
+		//	std::cout << "Frontier Iteration: "<<counter <<std::endl;
 		current_node= look_up[frontier.top().first];
 		current_hash =	frontier.top().first;
 		frontier.pop();
@@ -415,7 +415,7 @@ void dijkstra ( std::vector<std::vector<int>> &start,
 		
 		if( current_hash == goal_hash )
 		{
-			std::cout << "Goal Found!!" <<"\nVisited count:"<< visited.size() << "\n" << std::endl;
+			std::cout << "Goal Found!!" <<"\nVisited count:"<< visited.size() << "\nIterations"<<counter << std::endl;
 			break; 
 		}
 		_next.clear();
