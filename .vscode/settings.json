@@ -55,6 +55,8 @@
 		"memory": "cpp",
 		"xthread": "cpp",
 		"thread": "cpp",
-		"random": "cpp"
+		"random": "cpp",
+		"atomic": "cpp",
+		"iterator": "cpp"
 	}
 }
