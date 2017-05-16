@@ -147,11 +147,85 @@ the cpu and ram thus causing a moderate speed gain.
 \section{Results}
 The ``Path size'' will represent the transition between each state
 the ``Cost'' is the cost of the transition state not including the Heuristic function weight.
+\\
+\subsection{2x2 matrix}
+Starting position:
+\begin{tabular}{ l }
+	04 03 \\
+	02 01
+\end{tabular}
+$\Rightarrow$
+Goal:
+\begin{tabular}{ l }
+	01 02 \\
+	03 04
+\end{tabular}
+\\ 
+The results below are from a $\times5$ run on the PC(see \ref{PC}) with a 1000000 $CLOCKS PER SEC$
+\\
+\begin{tabular}{ | l | l | l | l | l | l | l | }
+\hline
+Run  & Path Size & Cost & Running Time Alg & Cpu Start & Cpu End & Total cpu time\\\hline
+1 & 4 & 4 & 0.00037s & 15625 & 15625 & 0s\\\hline
+2 & 4 & 4 & 0.00037s & 15625 & 15625 & 0s\\\hline
+3 & 4 & 4 & 0.0003685s & 15625 & 15625 & 0s\\\hline
+4 & 4 & 4 & 0.0002143s & 15625 & 15625 & 0s\\\hline
+5 & 4 & 4 & 0.0002142s & 15625 & 15625 & 0s\\\hline
+\end{tabular}
+\\
+The results below are from a $\times5$ run on Server(see \ref{Server}) with a 1000000 $CLOCKS PER SEC$
+\\
+\begin{tabular}{ | l | l | l | l | l | l | l | }
+\hline
+Run  & Path Size & Cost & Running Time Alg & Cpu Start & Cpu End & Total cpu time\\\hline
+1 & 4 & 4 & 0.000589516s & 12088 & 12672 & 0.000584s\\\hline
+2 & 4 & 4 & 0.000521357s & 10037 & 10553 & 0.000516s\\\hline
+3 & 4 & 4 & 0.000623622s & 10185 & 10807 & 0.000622s\\\hline
+4 & 4 & 4 & 0.000544579s & 9955 & 10497 & 0.000542s\\\hline
+5 & 4 & 4 & 0.000579305s & 9709 & 10286 & 0.000577s\\\hline
+\end{tabular}
+\subsection{3x3 matrix}
+Starting position:
+\begin{tabular}{ l }
+09 08 07 \\
+06 05 04 \\
+03 02 01
+\end{tabular}
+$\Rightarrow$
+Goal:
+\begin{tabular}{ l }
+	01 02 03 \\
+ 	04 05 06 \\
+ 	07 08 09
+\end{tabular}
+\\
+The results below are from a $\times5$ run on the PC(see \ref{PC}) with a 1000000 $CLOCKS PER SEC$
+\\
+\begin{tabular}{ | l | l | l | l | l | l | l | }
+\hline
+Run  & Path Size & Cost & Running Time Alg & Cpu Start & Cpu End & Total cpu time\\\hline
+1 & 34 & 34 & 0.0771355s & 31250 & 109375 & 0.078125s\\\hline
+2 & 34 & 34 & 0.0402095s & 15625 & 46875 & 0.03125s\\\hline
+3 & 34 & 34 & 0.0326797s & 0 & 31250 & 0.03125s\\\hline
+4 & 34 & 34 & 0.0325114s & 0 & 31250 & 0.03125s\\\hline
+5 & 34 & 34 & 0.0324343s & 0 & 31250 & 0.03125s\\\hline
+\end{tabular}
+\\
+The results below are from a $\times5$ run on Server(see \ref{Server}) with a 1000000 $CLOCKS PER SEC$
+\\
+\begin{tabular}{ | l | l | l | l | l | l | l | }
+\hline
+Run  & Path Size & Cost & Running Time Alg & Cpu Start & Cpu End & Total cpu time\\\hline
+1 & 34 & 34 & 0.08514s & 12444 & 97607 & 0.085163s\\\hline
+2 & 34 & 34 & 0.0843959s & 11669 & 96036 & 0.084367s\\\hline
+3 & 34 & 34 & 0.0852655s & 11209 & 96469 & 0.08526s\\\hline
+4 & 34 & 34 & 0.0837059s & 11251 & 94951 & 0.0837s\\\hline
+5 & 34 & 34 & 0.0835822s & 10498 & 94075 & 0.083577s\\\hline
+\end{tabular}
 
 \subsection{4x4 matrix}
 
-The results below are from a $\times5$ run on the PC(see \ref{PC}) with a 1000000 $CLOCKS PER SEC$
-\\
+
 Starting position:
 \begin{tabular}{ l }
 16 15 15 13\\
@@ -166,6 +240,8 @@ Goal:
 09 10 11 12\\
 13 14 15 16\end{tabular}
 \\ 
+The results below are from a $\times5$ run on the PC(see \ref{PC}) with a 1000000 $CLOCKS PER SEC$
+\\
 \begin{tabular}{ | l | l | l | l | l | l | l | }
 \hline
 Run  & Path Size & Cost & Running Time Alg & Cpu Start & Cpu End & Total cpu time\\\hline
@@ -176,10 +252,62 @@ Run  & Path Size & Cost & Running Time Alg & Cpu Start & Cpu End & Total cpu tim
 5 & 153 & 178 & 19.2716s & 0 & 19281250 & 19.2812s\\\hline
 \end{tabular}
 \\
+The results below are from a $\times5$ run on Server(see \ref{Server}) with a 1000000 $CLOCKS PER SEC$
+\\
+\begin{tabular}{ | l | l | l | l | l | l | l | }
+\hline
+Run  & Path Size & Cost & Running Time Alg & Cpu Start & Cpu End & Total cpu time\\\hline
+1 & 153 & 178 & 50.1818s & 12055 & 50126065 & 50.114s\\\hline
+2 & 153 & 178 & 50.2406s & 12573 & 50170881 & 50.1583s\\\hline
+3 & 153 & 178 & 50.1994s & 11521 & 50125078 & 50.1136s\\\hline
+4 & 153 & 178 & 50.3866s & 12512 & 50319531 & 50.307s\\\hline
+5 & 153 & 178 & 50.0151s & 11048 & 49937159 & 49.9261s\\\hline
+\end{tabular}
 \\
 The results has the same path size and cost, and close running time.
 From this data the algorithm is consistent with its result with path size.
 
+\subsection{Output}
+Each run generates a file, stored in the data folder, with information
+about each run.
+
+Out put file gives the hash for the start and end state \\
+The Algorithm runs \\
+Then it show the Visited count (explored) and the number
+Iterations it went through.\\
+The path is out printed next show the transitions\\
+Finally the run time stats are printed.
+
+\begin{lstlisting}
+Start Hash:706246336224068
+Goal Hash:706246335411732
+============= Algorithm  ===========
+Goal Found!!
+Visited count:5
+Iterations5
+1	2	
+3	4	
+Cost:1
+706246335411732->706246335412049
+1	2	
+4	3	
+Cost:1
+706246335412049->706246336219922
+4	2	
+1	3	
+Cost:1
+706246336219922->706246336224256
+4	3	
+1	2	
+Cost:1
+706246336224256->706246336224068
+4	3	
+2	1	
+Path size: 4	Cost: 4
+Running time Algorithm:	0.000589516s
+cpu start: 12088	cpu end:12672	CLOCKS_PER_SEC:1000000
+cpu time:	0.000584s
+\end{lstlisting}
 % =================================================
 % Sources of error
 % =================================================
@@ -210,8 +338,19 @@ Running time Algorithm: 20.0533s
 cpu start: 15625	cpu end:19828125	CLOCKS_PER_SEC:1000000
 cpu time:	19.8125s
 \end{lstlisting}
+\subsection{Data structures}
+This implementation only allows for n to be less then 5, if 5 is chosen
+the std map library will throw a segmentation fault for exceeding size. 
+If given more time this issue could have been resolved by creating custom
+data structures to handle larger hash values and more combinations.
+\subsection{Cpu boost}
+During some of my runs the cpu on PC (See \ref{PC}) were being affected 
+the the cpu boosting into higher GHz or speed. this is error is prevalent during $3\times3$
+run.
 
-
+% ================================
+% System 
+% ================================
 \section{System}
 \subsection{IDE}\label{IDE}
 This code was programming in Visual Studio Code\cite{vscode} which an MIT ``Source Code'' editor
