@@ -152,11 +152,8 @@ int main(int argc, char * argv[]){
 	queue.enqueueReadBuffer(buffer_result, CL_TRUE, 0, sizeof(int) * result_size, result);
 	queue.enqueueReadBuffer(buffer_cost, CL_TRUE, 0, sizeof(int) * depth_size*2, cost); 
 	
-	std::chrono::duration<double> diff = end-start_time;
-	std::cout<< "Running time Algorithm:\t" << diff.count() <<"s" << std::endl;			
-	std::cout<< "cpu start: "<< start_cpu << "\t" <<"cpu end:"<<end_cpu<<"\tCLOCKS_PER_SEC:"<<CLOCKS_PER_SEC  <<std::endl;		
-	double cpu = (end_cpu - start_cpu) / (double)CLOCKS_PER_SEC ;			
-	std::cout<< "cpu time:\t" <<cpu<<"s" << std::endl;
+
+
 	 try{
 		for(int i=0; i<result_size; ++i){
 
@@ -172,6 +169,14 @@ int main(int argc, char * argv[]){
 		}
 	 } catch(std::exception& e){
 	 }
+
+	std::chrono::duration<double> diff = end-start_time;
+	std::cout<< "Running time Algorithm:\t" << diff.count() <<"s" << std::endl;			
+	std::cout<< "cpu start: "<< start_cpu << "\t" <<"cpu end:"<<end_cpu<<"\tCLOCKS_PER_SEC:"<<CLOCKS_PER_SEC  <<std::endl;		
+	double cpu = (end_cpu - start_cpu) / (double)CLOCKS_PER_SEC ;			
+	std::cout<< "cpu time:\t" <<cpu<<"s" << std::endl;
+
+
 
 	delete start;
 	start = nullptr;
