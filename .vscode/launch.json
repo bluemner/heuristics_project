@@ -23,7 +23,7 @@
 			"request": "launch",
 			"program": "${workspaceRoot}/bin/gpu.exe",
 			"args": [
-				"3",
+				"2",
 				"${workspaceRoot}\\kernel\\search.cl"
 			],
 			"stopAtEntry": false,

@@ -136,31 +136,31 @@ int main(int argc, char * argv[]){
     queue.enqueueWriteBuffer(buffer_goal   , CL_TRUE, 0, sizeof(int)*n, goal);
     queue.enqueueWriteBuffer(buffer_current, CL_TRUE, 0, sizeof(int)*n, start);
   	queue.enqueueWriteBuffer(buffer_result , CL_TRUE, 0, sizeof(int) *result_size ,result );
- 	queue.enqueueWriteBuffer(buffer_cost , CL_TRUE, 0, sizeof(int) *n , cost  );
+ 	queue.enqueueWriteBuffer(buffer_cost , CL_TRUE, 0, sizeof(int) *depth_size , cost  );
 	//GSD
 	cl::Kernel next_nodes(program, "next_nodes");
 	next_nodes.setArg(0,_size_);
 	next_nodes.setArg(1,buffer_goal);
 	next_nodes.setArg(2,buffer_current);
 	next_nodes.setArg(3, buffer_result );
-	
+	next_nodes.setArg(4, buffer_cost );
 	queue.enqueueNDRangeKernel(next_nodes, cl::NullRange ,cl::NDRange( depth_size  ),cl::NDRange(1));
 	queue.enqueueReadBuffer(buffer_result, CL_TRUE, 0, sizeof(int) * result_size, result);
-	 
+
+	queue.enqueueReadBuffer(buffer_cost, CL_TRUE, 0, sizeof(int) * depth_size, cost); 
 	 try{
 		for(int i=0; i<result_size; ++i){
 
 			std::cout<< result[i] <<"\t";
 			if( (i+1) % n ==0){
 				std::cout<<std::endl;
-			}
-		
+				std::cout<<"cost["<<(i) / n<<"]:"<<cost[(i) / n] <<std::endl;
+			}		
 			if((i+1)  % _size_ ==0){
 				std::cout<<std::endl;
 			}
 		}
 	 } catch(std::exception& e){
-
 	 }
 
 	delete start;

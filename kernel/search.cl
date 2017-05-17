@@ -37,7 +37,8 @@ void rotate_right(const int size,const int row,const int value,const int start,_
 __kernel void next_nodes(const int size,
 						 __constant int * goal,
 						 __global int *current,
-						 __global int *result
+						 __global int *result,
+						 __global int *cost
 						)
 {
 	//[0....7] n =2
@@ -45,12 +46,12 @@ __kernel void next_nodes(const int size,
 	//int j  = id % size;
 	//x + y * sizeX + z * sizeX * sizeY
 	int id = get_global_id(0);
-
 	int n = size * size;
 	int start = n * id ;
 	int i = id % size;
 	int j = id / 4;
 	//result[id]=j*10;
+	cost[id]= j;
 	for(int k=0; k< n; k++){
 		result[start+k] = current[k];
 	}
@@ -73,7 +74,7 @@ __kernel void next_nodes(const int size,
 }
 __kernel void search(const int size, __constant int * source, __constant int * target)
 {
-	//Get our global thread ID
+	//Get our global thread ID  
 	int id = get_global_id(0);
 	
 }
