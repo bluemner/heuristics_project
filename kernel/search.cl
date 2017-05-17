@@ -1,3 +1,62 @@
+// Open cl - kernel 
+// 
+#define PQ_START	0
+#define PQ_END		1
+#define PQ_MAX		2
+
+// Queue item with item and value  
+typedef struct queue_item_struct{
+	int id;
+	int value;
+} queue_item_struct;
+
+// inserts element basied on priority 
+void pq_insert( const int value, const int id ,__global  queue_item_struct * pq, __global int *pq_info )
+{
+	int position =pq_info[PQ_END]+1;
+	for(int i=pq_info[PQ_START]; i< pq_info[PQ_END];i++ )
+	{
+		if(pq[i].value > value){
+			position = i;
+			break;
+		}
+	}
+	queue_item_struct temp={ .id = id, .value =value};
+	if(position+1>pq_info[PQ_MAX] && pq_info[PQ_START] > 0)
+	{
+		// TODO SHIFT LEFT ADD TO END
+		for(int i=pq_info[PQ_START]-1; i<position; i++ ){
+			pq[i]=pq[i+1];
+		}
+		pq_info[PQ_START] = pq_info[PQ_START] -1;
+
+	}else if(pq_info[PQ_START] > 0){
+		// TODO SHIFT LEFT ADD AT POSITION
+		for(int i=pq_info[PQ_START]-1; i<position; i++ ){
+			pq[i]=pq[i+1];
+		}
+		pq_info[PQ_START] = pq_info[PQ_START] -1;
+
+	}else if(pq_info[PQ_START] ==0 && pq_info[PQ_END] < pq_info[PQ_MAX] ){
+		// SHIFT RIGHT
+		for(int i= pq_info[PQ_END]; i>position; i--){
+			pq[i]=pq[i-1];
+		}
+		pq_info[PQ_END] = pq_info[PQ_END]+1;
+	}
+	pq[position] = temp;
+
+}
+// returns the id of the top element in the queue
+int pq_peek(__global  queue_item_struct * pq, __global int *pq_info){
+	return pq[pq_info[PQ_START]].id;
+}
+// Removes one element form the queue
+void pq_pop( __global int *pq_info){
+	pq_info[PQ_START]= pq_info[PQ_START]+1;
+}
+
+
 int heuristic_function(const int size, __constant int * goal, __global int * matrix, const int start){
 	int result=0;	
 	for( int i=0; i < size * size; i++){
@@ -63,7 +122,6 @@ __kernel void next_nodes(const int size,
 	switch(id % 4){
 		case 0:
 			rotate_up	(size,i,j,start,current, result);
-			
 			break;
 		case 1:
 			 rotate_down (size,i,j,start,current, result );
@@ -83,5 +141,4 @@ __kernel void search(const int size, __constant int * source, __constant int * t
 	//Get our global thread ID  
 	int id = get_global_id(0);
 	int lid= get_local_id(0);
-
 }

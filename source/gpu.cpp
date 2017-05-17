@@ -35,9 +35,9 @@ int load_file(char* file_name, std::string &data){
   {
     while ( getline (my_file,line) )
     {
-		if(line.find("//") == std::string::npos ){
-			 data+= line;
-		}
+		//if(line.find("//") == std::string::npos ){
+			 data+= line +"\n";
+		//}
     }
     my_file.close();
 	
@@ -104,8 +104,7 @@ int main(int argc, char * argv[]){
 		std::cout<<"Problem Loading kernel file"<<std::endl;
 		exit(1);
 	}
-
-
+	//std::cout<<kernel_code<<std::endl;
 	sources.push_back({kernel_code.c_str(), kernel_code.length()});
 
     cl::Program program(context, sources);
