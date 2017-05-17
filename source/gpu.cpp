@@ -6,11 +6,6 @@
 #include <CL/cl.hpp>
 #include <exception>
 
-
-#define MEM_SIZE (128)
-#define MAX_SOURCE_SIZE (0x100000)
-
-
 void print(int size, int *matrix){
 	for(int i = 0 ; i <size; i++){
 		for(int j = 0 ; j < size; j++){
@@ -126,17 +121,17 @@ int main(int argc, char * argv[]){
 	cl::Buffer buffer_goal(context, CL_MEM_READ_ONLY ,   sizeof(int) * n);//__constant int * goal,
 	cl::Buffer buffer_current(context, CL_MEM_READ_WRITE , sizeof(int) *n ); //__global int *current,
 	cl::Buffer buffer_result(context, CL_MEM_READ_WRITE ,  sizeof(int) * result_size); //__global int **result
-	cl::Buffer buffer_cost(context, CL_MEM_READ_WRITE ,  sizeof(int) * depth_size); 
+	cl::Buffer buffer_cost(context, CL_MEM_READ_WRITE ,  sizeof(int) * depth_size *2); 
 
 	int * result= new int[result_size];
-	int * cost  = new int[depth_size];
+	int * cost  = new int[depth_size *2];
 
 	cl::CommandQueue queue(context, default_device);
     // push write commands to queue
     queue.enqueueWriteBuffer(buffer_goal   , CL_TRUE, 0, sizeof(int)*n, goal);
     queue.enqueueWriteBuffer(buffer_current, CL_TRUE, 0, sizeof(int)*n, start);
   	queue.enqueueWriteBuffer(buffer_result , CL_TRUE, 0, sizeof(int) *result_size ,result );
- 	queue.enqueueWriteBuffer(buffer_cost , CL_TRUE, 0, sizeof(int) *depth_size , cost  );
+ 	queue.enqueueWriteBuffer(buffer_cost , CL_TRUE, 0, sizeof(int) *depth_size *2 , cost  );
 	//GSD
 	cl::Kernel next_nodes(program, "next_nodes");
 	next_nodes.setArg(0,_size_);
@@ -146,8 +141,7 @@ int main(int argc, char * argv[]){
 	next_nodes.setArg(4, buffer_cost );
 	queue.enqueueNDRangeKernel(next_nodes, cl::NullRange ,cl::NDRange( depth_size  ),cl::NDRange(1));
 	queue.enqueueReadBuffer(buffer_result, CL_TRUE, 0, sizeof(int) * result_size, result);
-
-	queue.enqueueReadBuffer(buffer_cost, CL_TRUE, 0, sizeof(int) * depth_size, cost); 
+	queue.enqueueReadBuffer(buffer_cost, CL_TRUE, 0, sizeof(int) * depth_size*2, cost); 
 	 try{
 		for(int i=0; i<result_size; ++i){
 
@@ -155,6 +149,7 @@ int main(int argc, char * argv[]){
 			if( (i+1) % n ==0){
 				std::cout<<std::endl;
 				std::cout<<"cost["<<(i) / n<<"]:"<<cost[(i) / n] <<std::endl;
+				std::cout<<"h["<<(i) / n<<"]:"<<cost[depth_size + ((i) / n)] <<std::endl;
 			}		
 			if((i+1)  % _size_ ==0){
 				std::cout<<std::endl;
