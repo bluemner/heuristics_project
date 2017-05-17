@@ -134,7 +134,7 @@ void get_next_node(std::vector<std::vector<int>> &current,std::vector<std::vecto
 	// Row
 	for(int i=0; i< current.size();i++){
 		// Col
-		for(int j=0; j< (current.size()); j++){
+		for(int j=1; j< (current.size()); j++){
 			result.empty();
 			shift_row(i,j,current, result);
 			for(int k =0; k<result.size(); k++){

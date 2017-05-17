@@ -10,6 +10,16 @@
 #define MEM_SIZE (128)
 #define MAX_SOURCE_SIZE (0x100000)
 
+
+void print(int size, int *matrix){
+	for(int i = 0 ; i <size; i++){
+		for(int j = 0 ; j < size; j++){
+			std::cout << matrix[i*size+j] <<"\t";
+		}
+		std::cout << std::endl;
+	}
+}
+
 void get_start(int size, int *result){
 	int value = size * size;
 	for(int i=0; i<size * size ; ++i){
@@ -30,7 +40,9 @@ int load_file(char* file_name, std::string &data){
   {
     while ( getline (my_file,line) )
     {
-      data+= line;
+		if(line.find("//") == std::string::npos ){
+			 data+= line;
+		}
     }
     my_file.close();
 	
@@ -41,7 +53,6 @@ int load_file(char* file_name, std::string &data){
     return 1;
 	}
 }
-
 /*
  *
  */
@@ -53,86 +64,114 @@ int main(int argc, char * argv[]){
 		return -1;
 	}
 	_size_ = std::stoi(argv[1]);
+	int n  = _size_ * _size_;
+	int * start= new int[n];
 
-	int * start = new int[_size_];
 	get_start(_size_, start);
-	int * goal = new int [_size_];
+	int * goal = new int [n];
 	get_goal(_size_, goal);
 
-	// OPEN CL INI SECTION
-	cl_device_id device_id = NULL;
-	cl_context context = NULL;
-	cl_command_queue command_queue = NULL;
-	cl_mem memobj = NULL;
-	cl_program program = NULL;
-	cl_kernel kernel = NULL;
-	cl_platform_id platform_id = NULL;
-	cl_uint ret_num_devices;
-	cl_uint ret_num_platforms;
-	cl_int command_result;
-	char string[MEM_SIZE];
-	
-	FILE *fp;
-	char *source_str;
-	size_t source_size;
+	print(_size_, start);
+	print(_size_, goal);
+	std::vector<cl::Platform> all_platforms;
+	cl::Platform::get(&all_platforms);
 
-	/* Load the source code containing the kernel*/
-	fp = fopen(argv[2], "r");
-	if (!fp)
-	{
-		fprintf(stderr, "Failed to load kernel.\n");
+	if (all_platforms.size()==0) {
+        std::cout<<" No platforms found. Check OpenCL installation!\n";
+        exit(1);
+    }
+	
+	
+	cl::Platform default_platform=all_platforms[0];
+    std::cout << "Using platform: "<<default_platform.getInfo<CL_PLATFORM_NAME>()<<"\n";
+
+    // get default device (CPUs, GPUs) of the default platform
+    std::vector<cl::Device> all_devices;
+    default_platform.getDevices(CL_DEVICE_TYPE_ALL, &all_devices);
+    if(all_devices.size()==0){
+        std::cout<<" No devices found. Check OpenCL installation!\n";
+        exit(1);
+    }
+	
+    // use device[0] because that's a GPU; device[1] is the CPU
+    cl::Device default_device=all_devices[1];
+
+    std::cout<< "Using device: "<<default_device.getInfo<CL_DEVICE_NAME>()<<"\n";
+
+	// a context is like a "runtime link" to the device and platform;
+    // i.e. communication is possible
+    cl::Context context({default_device});
+    // create the program that we want to execute on the device
+    cl::Program::Sources sources;
+
+	std::string kernel_code="";
+	if(load_file(argv[2],kernel_code)){
+		std::cout<<"Problem Loading kernel file"<<std::endl;
 		exit(1);
 	}
 
-	source_str = (char *)malloc(MAX_SOURCE_SIZE);
-	source_size = fread(source_str, 1, MAX_SOURCE_SIZE, fp);
-	fclose(fp);
 
-	/* Get Platform and Device Info */
-	command_result = clGetPlatformIDs(1, &platform_id, &ret_num_platforms);
-	command_result = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_DEFAULT, 1, &device_id, &ret_num_devices);
+	sources.push_back({kernel_code.c_str(), kernel_code.length()});
 
-	/* Create OpenCL context */
-	context = clCreateContext(NULL, 1, &device_id, NULL, NULL, &command_result);
+    cl::Program program(context, sources);
+    if (program.build({default_device}) != CL_SUCCESS) {
+        std::cout << "Error building: " << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(default_device) << std::endl;
+        exit(1);
+    }
+	// [4 *_size_][n] => [4 *2][4]=>[32]
+	int result_size = _size_*4*n;
 
-	/* Create Command Queue */
-	command_queue = clCreateCommandQueue(context, device_id, 0, &command_result);
 
-	/* Create Memory Buffer */
-	memobj = clCreateBuffer(context, CL_MEM_READ_WRITE, MEM_SIZE * sizeof(char), NULL, &command_result);
+	//cl::Buffer 		A(context, CL_MEM_READ_ONLY , sizeof(int), NULL, &command_result); //__constant int size
+	cl::Buffer buffer_goal(context, CL_MEM_READ_ONLY ,   sizeof(int) * n);//__constant int * goal,
+	cl::Buffer buffer_current(context, CL_MEM_READ_WRITE , sizeof(int) *n ); //__global int *current,
+	cl::Buffer buffer_result(context, CL_MEM_READ_WRITE ,  sizeof(int) * result_size); //__global int **result
+	//cl::Buffer buffer_cache(context, CL_MEM_READ_WRITE ,  sizeof(int) * n); 
 
-	/* Create Kernel Program from the source */
-	program = clCreateProgramWithSource(context, 1, (const char **)&source_str,
-										(const size_t *)&source_size, &command_result);
 
-	/* Build Kernel Program */
-	command_result = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
 
-	/* Create OpenCL Kernel */
-	kernel = clCreateKernel(program, "hello", &command_result);
+	int * result= new int[result_size];
+	int * cache = new int[n];
 
-	/* Set OpenCL Kernel Parameters */
-	command_result = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&memobj);
+	cl::CommandQueue queue(context, default_device);
+    // push write commands to queue
+    queue.enqueueWriteBuffer(buffer_goal   , CL_TRUE, 0, sizeof(int)*n, goal);
+    queue.enqueueWriteBuffer(buffer_current, CL_TRUE, 0, sizeof(int)*n, start);
+  	queue.enqueueWriteBuffer(buffer_result , CL_TRUE, 0, sizeof(int) *result_size ,result );
+ 	//queue.enqueueWriteBuffer(buffer_cache , CL_TRUE, 0, sizeof(int) *n , cache  );
+	//GSD
+	cl::Kernel next_nodes(program, "next_nodes");
+	next_nodes.setArg(0,_size_);
+	next_nodes.setArg(1,buffer_goal);
+	next_nodes.setArg(2,buffer_current);
+	//next_nodes.setArg(3, buffer_cache );
+	next_nodes.setArg(3, buffer_result );
+	//
+	queue.enqueueNDRangeKernel(next_nodes, cl::NullRange ,cl::NDRange( _size_*4*n),cl::NDRange(1));
+	queue.enqueueReadBuffer(buffer_result, CL_TRUE, 0, sizeof(int) * result_size, result);
+	 
+	 for(int i=0; i<result_size; ++i){
 
-	/* Execute OpenCL Kernel */
-	command_result = clEnqueueTask(command_queue, kernel, 0, NULL, NULL);
-
-	/* Copy results from the memory buffer */
-	command_result = clEnqueueReadBuffer(command_queue, memobj, CL_TRUE, 0,
-		MEM_SIZE * sizeof(char), string, 0, NULL, NULL);
+		std::cout<< result[i] <<" ";
+		if( (i+1) % n ==0){
+			std::cout<<std::endl;
 		
-	/* Clean Up */
-	command_result = clFlush(command_queue);
-	command_result = clFinish(command_queue);
-	command_result = clReleaseKernel(kernel);
-	command_result = clReleaseProgram(program);
-	command_result = clReleaseMemObject(memobj);
-	command_result = clReleaseCommandQueue(command_queue);
-	command_result = clReleaseContext(context);
-	free(source_str);
+		}
+	
+		if((i+1)  % _size_ ==0){
+			std::cout<<std::endl;
+		}
+
+	 }
+
 
 	delete start;
 	start = nullptr;
 	delete goal;
 	goal = nullptr;
+	delete result;
+	result = nullptr;
+	delete cache ;
+	cache  = nullptr;
+	return 0;
 }

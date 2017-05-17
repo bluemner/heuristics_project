@@ -10,6 +10,22 @@
 			"args": [
 				"3"
 			],
+		
+			"stopAtEntry": false,
+			"cwd": "${workspaceRoot}",
+			"environment": [],
+			"externalConsole": false
+		},
+
+		{
+			"name": "GPU (Windows)",
+			"type": "cppvsdbg",
+			"request": "launch",
+			"program": "${workspaceRoot}/bin/gpu.exe",
+			"args": [
+				"2",
+				"${workspaceRoot}\\kernel\\search.cl"
+			],
 			"stopAtEntry": false,
 			"cwd": "${workspaceRoot}",
 			"environment": [],
