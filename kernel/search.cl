@@ -56,7 +56,7 @@ void pq_pop( __global int *pq_info){
 	pq_info[PQ_START]= pq_info[PQ_START]+1;
 }
 
-
+// heuristic function needed for search 
 int heuristic_function(const int size, __constant int * goal, __global int * matrix, const int start){
 	int result=0;	
 	for( int i=0; i < size * size; i++){
@@ -109,6 +109,7 @@ __kernel void next_nodes(const int size,
 	//int j  = id % size;
 	//x + y * sizeX + z * sizeX * sizeY
 	int id = get_global_id(0);
+	int lid = get_local_id(0);
 	int n = size * size;
 	int start = n * id ;
 	int i = id % size;
@@ -141,4 +142,5 @@ __kernel void search(const int size, __constant int * source, __constant int * t
 	//Get our global thread ID  
 	int id = get_global_id(0);
 	int lid= get_local_id(0);
+	
 }

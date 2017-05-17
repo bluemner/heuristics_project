@@ -5,6 +5,12 @@
 #include <stdlib.h>
 #include <CL/cl.hpp>
 #include <exception>
+#include <chrono>
+#include <ctime>
+typedef struct queue_item_struct{
+	cl_int id;
+	cl_int value;
+} queue_item_struct;
 
 void print(int size, int *matrix){
 	for(int i = 0 ; i <size; i++){
@@ -80,7 +86,7 @@ int main(int argc, char * argv[]){
 	cl::Platform default_platform=all_platforms[0];
     std::cout << "Using platform: "<<default_platform.getInfo<CL_PLATFORM_NAME>()<<"\n";
 
-    // get default device (CPUs, GPUs) of the default platform
+    // get default device (CPUs, GPU's) of the default platform
     std::vector<cl::Device> all_devices;
     default_platform.getDevices(CL_DEVICE_TYPE_ALL, &all_devices);
     if(all_devices.size()==0){
@@ -116,7 +122,7 @@ int main(int argc, char * argv[]){
 	int depth_size = 4*_size_;
 	int result_size = _size_*4*n;
 
-	//cl::Buffer 		A(context, CL_MEM_READ_ONLY , sizeof(int), NULL, &command_result); //__constant int size
+	
 	cl::Buffer buffer_goal(context, CL_MEM_READ_ONLY ,   sizeof(int) * n);//__constant int * goal,
 	cl::Buffer buffer_current(context, CL_MEM_READ_WRITE , sizeof(int) *n ); //__global int *current,
 	cl::Buffer buffer_result(context, CL_MEM_READ_WRITE ,  sizeof(int) * result_size); //__global int **result
@@ -138,9 +144,19 @@ int main(int argc, char * argv[]){
 	next_nodes.setArg(2,buffer_current);
 	next_nodes.setArg(3, buffer_result );
 	next_nodes.setArg(4, buffer_cost );
+	auto start_time = std::chrono::system_clock::now();
+	auto start_cpu = std::clock();
 	queue.enqueueNDRangeKernel(next_nodes, cl::NullRange ,cl::NDRange( depth_size  ),cl::NDRange(1));
+	auto end = std::chrono::system_clock::now();
+	auto end_cpu = std::clock();
 	queue.enqueueReadBuffer(buffer_result, CL_TRUE, 0, sizeof(int) * result_size, result);
 	queue.enqueueReadBuffer(buffer_cost, CL_TRUE, 0, sizeof(int) * depth_size*2, cost); 
+	
+	std::chrono::duration<double> diff = end-start_time;
+	std::cout<< "Running time Algorithm:\t" << diff.count() <<"s" << std::endl;			
+	std::cout<< "cpu start: "<< start_cpu << "\t" <<"cpu end:"<<end_cpu<<"\tCLOCKS_PER_SEC:"<<CLOCKS_PER_SEC  <<std::endl;		
+	double cpu = (end_cpu - start_cpu) / (double)CLOCKS_PER_SEC ;			
+	std::cout<< "cpu time:\t" <<cpu<<"s" << std::endl;
 	 try{
 		for(int i=0; i<result_size; ++i){
 
@@ -167,3 +183,4 @@ int main(int argc, char * argv[]){
 	cost  = nullptr;
 	return 0;
 }
+
