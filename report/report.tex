@@ -269,10 +269,15 @@ The results has the same path size and cost.
 From this data the algorithm is consistent with its result with path size.
 There for from the data a tentative solution is provided, how ever for larger 
 numbers it becomes harder to prove minimum cost. 
-\subsection{other applications}
+\subsection{Other applications}
 The shifting row function
 was also consider in some attempts to find new algorithms for encryption \cite{rotation_enc}. 
 As general Purpose graphic processing unit (GPGPU) can take advantage of basic rotation, this would allow for new forms of encryption.
+
+gpu.cpp contains a partial code segment on generating the first depth needed for a search Heuristic done on the gpu using Opencl. given a little more time
+and with the assistance of ``\underline{Massively Parallel A* Search on a GPU}''\cite{a_start_gpu} the solvable solution size would increase to around $n=128$.
+$n=129$ over loads my GPGPU, This is most likely due to the gpu on PC (see \ref{PC})  being used to drive 3 1920 x1080 monitors.
+
 \subsection{Output}
 Each run generates a file, stored in the data folder, with information
 about each run.
@@ -283,6 +288,7 @@ Then it show the Visited count (explored) and the number
 Iterations it went through.\\
 The path is out printed next show the transitions\\
 Finally the run time stats are printed.
+
 
 \begin{lstlisting}
 Start Hash:706246336224068

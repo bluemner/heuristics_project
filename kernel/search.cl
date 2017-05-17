@@ -5,70 +5,70 @@ void heuristic_function(const int size, __global int * goal, __global int * matr
 	}
 	//return result;
 }
-void rotate_up(const int size,const int col, const int value, __global const int *matrix, __local int *result){
+void rotate_up(const int size,const int col, const int value,const int start, __global const int *matrix, __global int *result){
 	int shift;
 	for( int i = 0; i < size; i++ ){
 		shift = (i + value) % size;
-		result[size * i + col]=matrix[ size * shift + col];
+		result[start+(size * i + col)]=matrix[ size * shift + col];
 	}
 }
-void rotate_down(const int size,const int col,const int value,__global int *matrix,__local int *result){
+void rotate_down(const int size,const int col,const int value,const int start,__global int *matrix,__global int *result){
 	int shift;
 	for( int i = 0; i < size; i++ ){
 		shift = (i-value <0)? i - value + size: (i-value);
-		result[i * size + col]=matrix[size * shift +col];
+		result[start+ (i * size + col)]=matrix[size * shift +col];
 	}
 }
-void rotate_left(const int size,const int row,const int value ,__global int *matrix,__local  int *result){
+void rotate_left(const int size,const int row,const int value,const int start ,__global int *matrix,__global  int *result){
 	int shift;
 	for( int i = 0; i < size; i++ ){
 		shift = (i + value) % size;
-		result[row * size + i ]=matrix[ row * size + shift ];
+		result[start+ (row * size + i) ]=matrix[ row * size + shift ];
 	}
 }
-void rotate_right(const int size,const int row,const int value,__global int *matrix,__local int *result){
+void rotate_right(const int size,const int row,const int value,const int start,__global int *matrix,__global int *result){
 	int shift;
 	for(int i = 0; i <  size; i++ ){
 		shift = (i-value <0)? i-value+ size : (i-value);
-		result[row*size + i]=matrix[row * size + shift];
+		result[start+(row*size + i)]=matrix[row * size + shift];
 	}
 }
 // result  = [up,down,left,right][nxn]
 __kernel void next_nodes(const int size,
 						 __constant int * goal,
 						 __global int *current,
-						// __local int * cache,
-						 __global int *result)
+						 __global int *result
+						)
 {
 	//[0....7] n =2
 	//int i  = id / size;
 	//int j  = id % size;
 	//x + y * sizeX + z * sizeX * sizeY
 	int id = get_global_id(0);
+
 	int n = size * size;
-	int start = n * id;
-	int j = id % 4;
-	int i = id/4;
-	result[id]=id;
-	
-	// switch(j){
-	// 	case 0:
-	// 		rotate_up   (size,i,j,current, cache);
-	// 		break;
-	// 	case 1:
-	// 		 rotate_down (size,i,j,current, cache );
-	// 		break;
-	// 	case 2:
-	// 		rotate_left (size,i,j,current, cache );
-	// 		break;
-	// 	case 3:
-	// 		 rotate_right(size,i,j,current, cache );
-	// 		break;
-	// }
-	// for(int k=0; k<n; k++){
-		
-	// 	//= cache[k];
-	// }
+	int start = n * id ;
+	int i = id % size;
+	int j = id / 4;
+	//result[id]=j*10;
+	for(int k=0; k< n; k++){
+		result[start+k] = current[k];
+	}
+	switch(id % 4){
+		case 0:
+			rotate_up	(size,i,j,start,current, result);
+			break;
+		case 1:
+			 rotate_down (size,i,j,start,current, result );
+			break;
+		case 2:
+			rotate_left (size,i,j,start,current, result );
+			break;
+		case 3:
+			 rotate_right(size,i,j,start,current, result );
+			break;
+	}
+
 
 }
 __kernel void search(const int size, __constant int * source, __constant int * target)
